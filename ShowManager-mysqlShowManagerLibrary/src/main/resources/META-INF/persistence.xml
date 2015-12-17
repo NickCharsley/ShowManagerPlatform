@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="uk.co.oldnicksoftware_ShowManager-mysqlShowmanagerLibrary_nbm_1.0-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Prize</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Exhibitionsection</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Exhibitionexhibitor</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Sponsorship</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Exhibition</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Exhibitiontrophyclass</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Exhibitor</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Section</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Defaults</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Trophy</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Exhibitionclassprize</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Class</class>
+    <class>uk.co.oldnicksoftware.crudycucumber.domain.Exhibitionclass</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://mysql.showmanager.vm.ons:3306/showmanager?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.user" value="showmanager"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="showmanager"/>
+    </properties>
+  </persistence-unit>
+</persistence>

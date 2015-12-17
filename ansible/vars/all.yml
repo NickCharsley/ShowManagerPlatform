@@ -1,0 +1,23 @@
+---
+server:
+    install: '1'
+    timezone: Europe/London
+    locale: en_GB.UTF-8
+vagrant_local:
+    install: '1'
+    vm: { 
+        base_box: trusty64, 
+        hostname: mysql.showmanager.vm.ons, 
+        ip: 192.168.33.98, 
+        memory: '1024', 
+        sharedfolder: ./, 
+        syncType: '0' 
+    }
+mysql:
+    install: '1'
+    root_password: showmanagerpassword
+    database: showmanager
+    user: showmanager
+    password: showmanager
+    dump: 'ansible/files/Dump20151215.sql'
+
