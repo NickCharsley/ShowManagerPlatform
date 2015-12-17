@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 /**/
 @Options(
         format = { "pretty", "html:target/cucumber" }
-       ,glue={"uk.co.oldnicksoftware.crudycucumber.steps"}
+       ,glue={"uk.co.oldnicksoftware.showmanager.steps"}
        ,monochrome = true
 )
 /**/

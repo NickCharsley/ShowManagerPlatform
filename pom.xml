@@ -61,6 +61,8 @@
         <module>ShowManager-domain</module>
         <module>ShowManager-api</module>
         <module>ShowManager-mysqlShowManagerLibrary</module>
+        <module>ShowManager-memoryShowManagerLibrary</module>
+        <module>ShowManager-exhibitionViewer</module>
     </modules>
 
     <dependencies>
