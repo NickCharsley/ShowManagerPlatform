@@ -1,4 +1,4 @@
-@wip
+@tbc
 Feature: Delete Exhibitions
     In order to manage Exhibitions
     As a User
