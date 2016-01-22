@@ -13,7 +13,6 @@ Background:
       And I have an ExhibitionSection "Spring Show 2011':'2" Classification "Rose" Named "C" 
       And I Describe ExhibitionSectionClassification "Spring Show 2011':'2':'C" as "Description"  
       And I Make Exhibition "Spring Show 2011" Default
-      And I save everything
 
 Scenario: If we have no Default Exhibition we bounce back to Show Page
     Given I Remove Exhibition "Spring Show 2011" Default    

@@ -26,16 +26,28 @@
             <type>pom</type>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ShowManager-branding</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!-- NbModuleSuite functional in RELEASE70 or later: -->
-        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-nbjunit</artifactId>
             <version>${netbeans.version}</version>
-            <scope>test</scope> <!-- beyond platform cluster, this often needs to be dropped down to compile/runtime, some other modules in IDE clusters depend on it -->
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>CucumberJelly</artifactId>
+            <version>0.12-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ShowManager-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ShowManager-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -46,13 +58,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>CucumberJelly</artifactId>
-            <version>0.12-SNAPSHOT</version>
-            <scope>test</scope>
+            <artifactId>ShowManager-exhibitionViewer</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>ShowManager-exhibitionViewer</artifactId>
+            <artifactId>ShowManager-exhibitionEditor</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

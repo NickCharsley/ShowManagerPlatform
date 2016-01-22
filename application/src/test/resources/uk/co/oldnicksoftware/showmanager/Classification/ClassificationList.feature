@@ -14,7 +14,6 @@ Scenario: There are No Classifications
 
 Scenario: There is One Classification
     Given I have a Classification "Beetroot"
-      And I save everything
      When I am on "/classification/"
      Then I should see a "table#classification-list" element
       And I should see "Beetroot" in the "#classification-list" element
@@ -22,7 +21,6 @@ Scenario: There is One Classification
 Scenario: There are Many Classifications
     Given I have a Classification "Beetroot"
       And I have a Classification "Onions"
-      And I save everything
      When I am on "/classification/"
      Then I should see a "table#classification-list" element
       And I should see "Beetroot" in the "#classification-list" element
@@ -30,7 +28,6 @@ Scenario: There are Many Classifications
 
 Scenario: Buttons exist to View, Edit and Delete a Classification
     Given I have a Classification "Beetroot"
-      And I save everything
      When I am on "/classification/"
      Then I should see a "Classification classification button for Beetroot" element
       And I should see a "Classification edit button for Beetroot" element

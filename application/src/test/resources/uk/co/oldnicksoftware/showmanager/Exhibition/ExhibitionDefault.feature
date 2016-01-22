@@ -13,16 +13,16 @@ Background:
       And I save everything                                                    
 
 Scenario: Exhibition Delete Button Exists
-    Given I am on "/show/" 
-     Then I should see a "table#show-list" element
+    Given I have a "ExhibitionList Window" Panel 
+     Then The "ExhibitionList Window" Panel's ROOT NODE is "Exhibitions"
       And I should see a "Exhibition default button for Spring Show 2011" element
       And I should see a "Exhibition default button for Spring Show 2012" element
       And I should see a "Exhibition default button for Spring Show 2013" element
       And I should see a "Exhibition default button for Spring Show 2014" element
 
 Scenario: Exhibition Default Flag is set by clicking it
-    Given I am on "/show/" 
-     Then I should see a "table#show-list" element
+    Given I have a "ExhibitionList Window" Panel 
+     Then The "ExhibitionList Window" Panel's ROOT NODE is "Exhibitions"
       And I should see a "Exhibition default button for Spring Show 2011" element
       And I should see a "Exhibition default button for Spring Show 2012" element
       And I should see a "Exhibition default button for Spring Show 2013" element
@@ -37,8 +37,8 @@ Scenario: Exhibition Default Flag is set by clicking it
       And I should see a "Exhibition default button for Spring Show 2014" element
 
 Scenario: Only One Exhibition can have Default Flag set
-    Given I am on "/show/" 
-     Then I should see a "table#show-list" element
+    Given I have a "ExhibitionList Window" Panel 
+     Then The "ExhibitionList Window" Panel's ROOT NODE is "Exhibitions"
       And I should see a "Exhibition default button for Spring Show 2011" element
      When I follow "Exhibition default link for Spring Show 2011"
      Then I should be on "/show/"

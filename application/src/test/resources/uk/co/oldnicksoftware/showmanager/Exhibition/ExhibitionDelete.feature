@@ -1,4 +1,3 @@
-@tbc
 Feature: Delete Exhibitions
     In order to manage Exhibitions
     As a User
@@ -6,36 +5,24 @@ Feature: Delete Exhibitions
 
 Background:
     Given I have an Empty Database 
-      And I have an Exhibition "Spring Show 2011"                            
-      And I have an Exhibition "Spring Show 2012"                              
-      And I save everything                                                    
+      And I have a "ExhibitionList Window" Panel 
+      And I have an Exhibition "Spring Show 2011"
+      And I have an Exhibition "Spring Show 2012"
+      And I refresh the Exhibition List
 
-Scenario: Exhibition Delete Button Exists
-    Given I am on "/show/" 
-     Then I should see a "table#show-list" element
-      And I should see a "Exhibition delete button for Spring Show 2011" element
-      And I should see a "Exhibition delete button for Spring Show 2012" element
+Scenario: Cancel Deleting an Exhibition
+    Given I request Exhibition "Spring Show 2011" be deleted
+     Then I should be asked to confirm the deletion
+     When I don't confirm the deletion  
+     Then The Exhibition List contains "Spring Show 2011"
     
 Scenario: Delete an Empty Exhibition
-    Given I am on "/show/" 
-     Then I should see a "Exhibition delete button for Spring Show 2011" element
-     When I follow "Exhibition delete link for Spring Show 2011"
-     Then I should be on "/show/"
-      And I should see a "div#flash-message" element
-      And I should see text matching "Notice: Deleting Show Spring Show 2011"
-      And I should see text matching "Notice: Finished Deleting Show"
-
-Scenario: Delete a Non Existing Exhibition
-    Given I am on "/show/NoShow/delete"
-     Then I should be on "/show/"
-      And I should see a "div#flash-message" element
-      And I should see text matching "Notice: Cannot Find Exhibition to Delete"
+    Given I request Exhibition "Spring Show 2011" be deleted
+     When I confirm the deletion  
+     Then The Exhibition List dosn't contain "Spring Show 2011"
 
 Scenario: Delete a Full Exhibition
-    Given I am on "/show/" 
-     Then I should see a "Exhibition delete button for Spring Show 2011" element
-     When I follow "Exhibition delete link for Spring Show 2011"
-     Then I should be on "/show/"
-      And I should see a "div#flash-message" element
-      And I should see text matching "Notice: Deleting Show Spring Show 2011"
-      And I should see text matching "Notice: Finished Deleting Show"
+    Given I have Full Exhibition "Spring Show 2011"      
+      And I request Exhibition "Spring Show 2011" be deleted
+     When I confirm the deletion  
+     Then The Exhibition List dosn't contain "Spring Show 2011"

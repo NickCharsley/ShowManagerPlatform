@@ -18,6 +18,7 @@
                     <publicPackages>
                         <publicPackage>uk.co.oldnicksoftware.showmanager.api.capabilities</publicPackage>
                         <publicPackage>uk.co.oldnicksoftware.showmanager.api</publicPackage>
+                        <publicPackage>uk.co.oldnicksoftware.showmanager.api.entities</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
@@ -52,6 +53,16 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>ShowManager-domain</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-validator-cdi</artifactId>                    
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
     <properties>

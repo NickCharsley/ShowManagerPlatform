@@ -17,6 +17,7 @@
                 <configuration>
                     <publicPackages>
                         <publicPackage>uk.co.oldnicksoftware.showmanager.domain</publicPackage>
+                        <publicPackage>uk.co.oldnicksoftware.showmanager.domain.validations</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>

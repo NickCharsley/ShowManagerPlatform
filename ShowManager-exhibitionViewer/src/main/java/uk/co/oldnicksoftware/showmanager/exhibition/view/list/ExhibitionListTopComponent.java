@@ -19,8 +19,8 @@ import org.openide.nodes.NodeReorderEvent;
 import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import uk.co.oldnicksoftware.showmanager.api.ExhibitionCollection;
-import uk.co.oldnicksoftware.showmanager.exhibition.view.api.RootNode;
+import uk.co.oldnicksoftware.showmanager.api.entities.ExhibitionCollection;
+import uk.co.oldnicksoftware.showmanager.exhibition.view.api.nodes.RootNode;
 
 /**
  * Top component which displays something.
@@ -63,6 +63,7 @@ public final class ExhibitionListTopComponent extends TopComponent implements Ex
 
         ExhibitionCollection query = Lookup.getDefault().lookup(ExhibitionCollection.class);
         RootNode node = new RootNode(query);
+        query.addRootNode(node);
         explorerManager.setRootContext(node);
         
         ActionMap map = getActionMap();

@@ -6,55 +6,82 @@
 package uk.co.oldnicksoftware.showmanager.steps;
 
 import cucumber.api.java.en.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import org.openide.util.Lookup;
-import org.openide.windows.WindowManager;
-import uk.co.oldnicksoftware.showmanager.api.ExhibitionCollection;
-import uk.co.oldnicksoftware.showmanager.api.capabilities.RemovableEntityCapability;
+import cucumber.runtime.PendingException;
+import java.util.Random;
+import uk.co.oldnicksoftware.showmanager.helpers.*;
 
 /**
  *
  * @author nick
  */
 public class DataSteps {
-    private final ExhibitionCollection exhibitionCollection;
+    private void z_nop() throws Throwable {
+        // Just exists to keep PendingException as an import
+        throw new PendingException();
+    }
+    //Helpers
+    private final FileToolBarHelper fileToolBarHelper;
+    private final ConfirmObjectSaveHelper confirmObjectSaveHelper;
+    private final ObjectNotSavableHelper objectNotSavableHelper;
+    private final CollectionHelper collectionHelper;    
 
-    public DataSteps(){
-        Lookup defaultLookup = Lookup.getDefault();
-        
-        exhibitionCollection      = defaultLookup.lookup(ExhibitionCollection.class);
+    public DataSteps(FileToolBarHelper fileToolBarHelper
+                    ,ConfirmObjectSaveHelper confirmObjectSaveHelper
+                    ,ObjectNotSavableHelper objectNotSavableHelper
+                    ,CollectionHelper collectionHelper
+                    ){
+        this.fileToolBarHelper=fileToolBarHelper;
+        this.confirmObjectSaveHelper=confirmObjectSaveHelper;
+        this.objectNotSavableHelper=objectNotSavableHelper;
+        this.collectionHelper=collectionHelper;        
+    }
+    
+    
+    @Given("^I have an Exhibition \"([^\"]*)\"$")
+    public void createExhibition(String exhibition) throws Throwable {
+        collectionHelper.createExhibition(exhibition);        
+    }       
+    
+    @Given("^I Make Exhibition \"([^\"]*)\" (?:the |)Default$")
+    public void makeExhibitionDefault(String name) throws Throwable {        
+        collectionHelper.makeExhibitionDefault(name);
+    }
+    
+    @Given("^I have Full Exhibition \"([^\"]*)\"$")
+    public void haveFullExhibition(String name) throws Throwable {
+        throw new PendingException();
     }
 
-    private void buildExhibitions(String databaseType){
+    @Given("^(?:I|i) refresh the Exhibition List$")
+    public void refreshExhibitionList() throws Throwable {
+        collectionHelper.reloadPanel("ExhibitionList Window");
+    }
+
+    @When("^I save the edits$")
+    public void saveEdits() throws Throwable {
+        fileToolBarHelper.clickSave();
+        confirmObjectSaveHelper.pressOkButton();
+    }
+
+    @Then("^I cannot save the edits$")
+    public void cannotSaveEdits() throws Throwable {
+        fileToolBarHelper.clickSave();
+        objectNotSavableHelper.assertIsDisplayed();
+        objectNotSavableHelper.pressOkButton();
+    }    
+    
+    @Given("^I have an Exhibition \"([^\"]*)\" Section \"([^\"]*)\" Named \"([^\"]*)\"$")
+    public void exhibitionSectionNamed(String exhibition, String sectionNumber, String section) throws Throwable {
+        Random generator = new Random();        
         
+        collectionHelper.createExhibitionSection(
+                        collectionHelper.createExhibition(exhibition),
+                        collectionHelper.createSection(section),
+                        sectionNumber);
     }
     
     @Given("^I have (an Empty|an empty|the test) Database$")
     public void haveDatabase(String databaseType) throws Throwable {
-        assertThat("Have Exhibition Collection",exhibitionCollection,is(notNullValue()));
-        //assertThat("Have Purchase Order Collection",purchaseOrderCollection,is(notNullValue()));
-        
-        try {
-            //Always empty first
-            //Need to perform in correct order...            
-//            RemovableEntityCapability recPurchaseOrder= purchaseOrderCollection.getLookup().lookup(RemovableEntityCapability.class);
-//            recPurchaseOrder.removeAll();
-            RemovableEntityCapability recExhibition= exhibitionCollection.getLookup().lookup(RemovableEntityCapability.class);
-            recExhibition.removeAll();
-            
-            if (!databaseType.equalsIgnoreCase("an empty")){            
-                buildExhibitions(databaseType);
-  //              buildPurchaseOrders();
-            }        
-        } finally {            
-            //Get Explorer Window and Perform refresh...
-//            ExhibitionListTopComponent cltc=(ExhibitionListTopComponent)WindowManager
-//                                            .getDefault()
-//                                            .findTopComponent("ExhibitionListTopComponent");            
-//            exhibitionCollection.reload(cltc.getExplorerManager().getRootContext());
-        }
-    }        
-    
+        collectionHelper.haveDatabase(databaseType);
+    }            
 }

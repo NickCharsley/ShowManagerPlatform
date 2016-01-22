@@ -6,18 +6,9 @@
 package uk.co.oldnicksoftware.showmanager.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -39,30 +30,46 @@ public class Exhibition implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID")
     private Integer id;
+    
     @Basic(optional = false)
     @Column(name = "Name")
     private String name;
-    @OneToMany(mappedBy = "showID")
-    private Collection<Defaults> defaultsCollection;
+    
+    @OneToOne(mappedBy = "defaults")
+    private Defaults defaults;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exhibitionID")
-    private Collection<Exhibitionsection> exhibitionsectionCollection;
+    private Collection<ExhibitionSection> exhibitionSectionCollection;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exhibitionID")
     private Collection<Trophy> trophyCollection;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exhibitionID")
     private Collection<Exhibitionexhibitor> exhibitionexhibitorCollection;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exhibitionID")
     private Collection<Exhibitionclass> exhibitionclassCollection;
 
     public Exhibition() {
+        this(null,null);
     }
 
     public Exhibition(Integer id) {
-        this.id = id;
+        this(id,null);
     }
 
     public Exhibition(Integer id, String name) {
+        setExhibitionclassCollection(new ArrayList());
+        setExhibitionexhibitorCollection(new ArrayList());
+        setTrophyCollection(new ArrayList());
+        setExhibitionSectionCollection(new ArrayList());
+
         this.id = id;
         this.name = name;
+    }
+
+    public Exhibition(String name) {
+        this(null,name);
     }
 
     public Integer getId() {
@@ -80,31 +87,73 @@ public class Exhibition implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+    
+    private boolean updateCycle = false;
 
+    public void unlink(Defaults defaults){
+        link((Defaults)null);
+    }
+    
+    public void link(Defaults defaults){
+        if (updateCycle) return;
+        updateCycle=true;
+        if (this.defaults != defaults){
+            if (this.defaults != null){
+                this.defaults.unlink(this.defaults.getShowID());
+            }
+        }
+        if (defaults!=null){
+            defaults.link(this);
+        }       
+        this.defaults=defaults;
+        updateCycle=false;
+    }
+    
+    public Defaults getDefaults(){
+        return defaults;
+    }
+
+    public boolean isDefault(){
+        return defaults!=null;
+    }
+    
     @XmlTransient
-    public Collection<Defaults> getDefaultsCollection() {
-        return defaultsCollection;
+    public Collection<ExhibitionSection> getExhibitionSectionCollection() {
+        return exhibitionSectionCollection;
     }
 
-    public void setDefaultsCollection(Collection<Defaults> defaultsCollection) {
-        this.defaultsCollection = defaultsCollection;
+    private void setExhibitionSectionCollection(Collection<ExhibitionSection> exhibitionsectionCollection) {
+        this.exhibitionSectionCollection = exhibitionsectionCollection;
     }
 
-    @XmlTransient
-    public Collection<Exhibitionsection> getExhibitionsectionCollection() {
-        return exhibitionsectionCollection;
+    public void link(ExhibitionSection exhibitionSection){
+        if (updateCycle) return;
+        if (exhibitionSection==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (!exhibitionSectionCollection.contains(exhibitionSection)){
+            exhibitionSectionCollection.add(exhibitionSection);
+            exhibitionSection.link(this);
+        }
+        updateCycle=false;
     }
 
-    public void setExhibitionsectionCollection(Collection<Exhibitionsection> exhibitionsectionCollection) {
-        this.exhibitionsectionCollection = exhibitionsectionCollection;
+    public void unlink(ExhibitionSection exhibitionSection){
+        if (updateCycle) return;
+        if (exhibitionSection==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (exhibitionSectionCollection.contains(exhibitionSection)){
+            exhibitionSectionCollection.remove(exhibitionSection);
+            exhibitionSection.unlink(this);
+        }
+        updateCycle=false;        
     }
-
+    
     @XmlTransient
     public Collection<Trophy> getTrophyCollection() {
         return trophyCollection;
     }
 
-    public void setTrophyCollection(Collection<Trophy> trophyCollection) {
+    private void setTrophyCollection(Collection<Trophy> trophyCollection) {
         this.trophyCollection = trophyCollection;
     }
 
@@ -113,7 +162,7 @@ public class Exhibition implements Serializable {
         return exhibitionexhibitorCollection;
     }
 
-    public void setExhibitionexhibitorCollection(Collection<Exhibitionexhibitor> exhibitionexhibitorCollection) {
+    private void setExhibitionexhibitorCollection(Collection<Exhibitionexhibitor> exhibitionexhibitorCollection) {
         this.exhibitionexhibitorCollection = exhibitionexhibitorCollection;
     }
 
@@ -122,7 +171,7 @@ public class Exhibition implements Serializable {
         return exhibitionclassCollection;
     }
 
-    public void setExhibitionclassCollection(Collection<Exhibitionclass> exhibitionclassCollection) {
+    private void setExhibitionclassCollection(Collection<Exhibitionclass> exhibitionclassCollection) {
         this.exhibitionclassCollection = exhibitionclassCollection;
     }
 
@@ -150,5 +199,4 @@ public class Exhibition implements Serializable {
     public String toString() {
         return "uk.co.oldnicksoftware.showmanager.Exhibition[ id=" + id + " ]";
     }
-    
 }

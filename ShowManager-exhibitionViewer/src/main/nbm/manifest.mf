@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-OpenIDE-Module-Layer: uk/co/oldnicksoftware/showmanager/exhibitionviewer/layer.xml
-OpenIDE-Module-Localizing-Bundle: uk/co/oldnicksoftware/showmanager/exhibitionviewer/Bundle.properties
+OpenIDE-Module-Layer: uk/co/oldnicksoftware/showmanager/exhibition/view/layer.xml
+OpenIDE-Module-Localizing-Bundle: uk/co/oldnicksoftware/showmanager/exhibition/view/Bundle.properties
 OpenIDE-Module-Requires: org.openide.windows.WindowManager
 

@@ -13,7 +13,6 @@ Background:
       And I have an ExhibitionSection "Spring Show 2011':'2" Classification "Rose" Named "C" 
       And I Describe ExhibitionSectionClassification "Spring Show 2011':'2':'C" as "Description"  
       And I Make Exhibition "Spring Show 2011" Default
-      And I save everything
 
 Scenario: ExhibitionSectionClassification Delete Button Exists
     Given I am on "/exhibitionsectionclassification/" 

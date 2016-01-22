@@ -12,17 +12,18 @@ import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import uk.co.oldnicksoftware.showmanager.api.EntityCollection;
+import uk.co.oldnicksoftware.showmanager.api.entities.EntityCollection;
 import uk.co.oldnicksoftware.showmanager.api.capabilities.*;
 
 /**
  *
  * @author nick
  */
-public class MemoryCollection implements EntityCollection {
+public abstract class MemoryCollection<E> implements EntityCollection<E> {
     protected final List collection;
     protected final Lookup lookup;
     protected final InstanceContent instanceContent;
+    protected final List<Node> rootNodes;
 
     public MemoryCollection(){
         collection = new ArrayList<>();
@@ -30,6 +31,8 @@ public class MemoryCollection implements EntityCollection {
         instanceContent = new InstanceContent();
         // Create an AbstractLookup to expose InstanceContent contents...
         lookup = new AbstractLookup(instanceContent);
+        // Create a list of all root nodes
+        rootNodes= new ArrayList<>();
     }    
 
     @Override
@@ -38,20 +41,32 @@ public class MemoryCollection implements EntityCollection {
     }
 
     @Override
-    public void reload(Node rootNode){
+    public void reload(){
         try {
             //Refresh the list of collection via the implementation of the reload capability:
             ReloadableEntityCapability r = this.getLookup().lookup(ReloadableEntityCapability.class);
             if (r!=null) {
                 r.reload();
             }
-            ReloadableViewCapability rvc = rootNode.getLookup().lookup(ReloadableViewCapability.class);    
-            if (rvc!=null) {
-                rvc.reloadChildren();
+            for (Node rootNode : rootNodes) {
+                ReloadableViewCapability rvc = rootNode.getLookup().lookup(ReloadableViewCapability.class);    
+                if (rvc!=null) {
+                    rvc.reloadChildren();
+                }
             }
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
         }
-    }    
-    
+    }       
+
+    @Override
+    public void addRootNode(Node rootNode) {
+        rootNodes.add(rootNode);
+                
+    }
+
+    @Override
+    public void removeRootNode(Node rootNode) {
+        rootNodes.remove(rootNode);
+    }
 }

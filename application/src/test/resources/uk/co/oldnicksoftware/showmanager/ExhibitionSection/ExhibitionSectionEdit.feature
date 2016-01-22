@@ -10,7 +10,6 @@ Background:
       And I have an Exhibition "Spring Show 2011" Section "Flowers" Named "2"
       And I Make Exhibition "Spring Show 2011" Default
       And I Describe ExhibitionSection "Spring Show 2011':'2" as "Description"  
-      And I save everything
       And I am on "/exhibitionsection/" 
 
 Scenario: ExhibitionSection Edit Button Exists

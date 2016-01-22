@@ -6,6 +6,7 @@
 package uk.co.oldnicksoftware.showmanager.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -43,20 +44,26 @@ public class Section implements Serializable {
     @Column(name = "Name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sectionID")
-    private Collection<Exhibitionsection> exhibitionsectionCollection;
+    private Collection<ExhibitionSection> exhibitionSectionCollection;
 
     public Section() {
+        this(null,null);
     }
 
     public Section(Integer id) {
-        this.id = id;
+        this(id,null);
     }
 
     public Section(Integer id, String name) {
+        this.setExhibitionSectionCollection(new ArrayList());
         this.id = id;
         this.name = name;
     }
 
+    public Section(String name) {
+        this(null,name);
+    }
+    
     public Integer getId() {
         return id;
     }
@@ -73,13 +80,37 @@ public class Section implements Serializable {
         this.name = name;
     }
 
-    @XmlTransient
-    public Collection<Exhibitionsection> getExhibitionsectionCollection() {
-        return exhibitionsectionCollection;
+    private boolean updateCycle;
+
+    public void link(ExhibitionSection exhibitionSection){
+        if (updateCycle) return;
+        if (exhibitionSection==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (!exhibitionSectionCollection.contains(exhibitionSection)){
+            exhibitionSectionCollection.add(exhibitionSection);
+            exhibitionSection.link(this);
+        }
+        updateCycle=false;
     }
 
-    public void setExhibitionsectionCollection(Collection<Exhibitionsection> exhibitionsectionCollection) {
-        this.exhibitionsectionCollection = exhibitionsectionCollection;
+    public void unlink(ExhibitionSection exhibitionSection){
+        if (updateCycle) return;
+        if (exhibitionSection==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (exhibitionSectionCollection.contains(exhibitionSection)){
+            exhibitionSectionCollection.remove(exhibitionSection);
+            exhibitionSection.unlink(this);
+        }
+        updateCycle=false;        
+    }
+    
+    @XmlTransient
+    public Collection<ExhibitionSection> getExhibitionSectionCollection() {
+        return exhibitionSectionCollection;
+    }
+
+    private void setExhibitionSectionCollection(Collection<ExhibitionSection> exhibitionsectionCollection) {
+        this.exhibitionSectionCollection = exhibitionsectionCollection;
     }
 
     @Override

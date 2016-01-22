@@ -14,7 +14,6 @@ Scenario: There are No Sections
 
 Scenario: There is One Section
     Given I have a Section "Vegtables"
-      And I save everything
      When I am on "/section/"
      Then I should see a "table#section-list" element
       And I should see "Vegtables" in the "#section-list" element
@@ -22,7 +21,6 @@ Scenario: There is One Section
 Scenario: There are Many Sections
     Given I have a Section "Vegtables"
       And I have a Section "Flowers"
-      And I save everything
      When I am on "/section/"
      Then I should see a "table#section-list" element
       And I should see "Vegtables" in the "#section-list" element
@@ -30,7 +28,6 @@ Scenario: There are Many Sections
 
 Scenario: Buttons exist to View, Edit and Delete a Section
     Given I have a Section "Vegtables"
-      And I save everything
      When I am on "/section/"
      Then I should see a "Section section button for Vegtables" element
       And I should see a "Section edit button for Vegtables" element

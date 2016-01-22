@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
         format = { "pretty", "html:target/cucumber" }
        ,glue={"uk.co.oldnicksoftware.showmanager.steps"}
        //,monochrome = true
-       ,tags="@wip" // Only run wip features 
+       ,tags={"~@tbc","@wip"} // Only run wipfeatures  that are finished 
        //,tags={"~@tbc","~@wip"} //Only run compleated features
 )
 /**/

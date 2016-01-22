@@ -56,7 +56,7 @@ public class Exhibitionclass implements Serializable {
     private Exhibition exhibitionID;
     @JoinColumn(name = "ExhibitionSectionID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
-    private Exhibitionsection exhibitionSectionID;
+    private ExhibitionSection exhibitionSectionID;
 
     public Exhibitionclass() {
     }
@@ -120,11 +120,11 @@ public class Exhibitionclass implements Serializable {
         this.exhibitionID = exhibitionID;
     }
 
-    public Exhibitionsection getExhibitionSectionID() {
+    public ExhibitionSection getExhibitionSectionID() {
         return exhibitionSectionID;
     }
 
-    public void setExhibitionSectionID(Exhibitionsection exhibitionSectionID) {
+    public void setExhibitionSectionID(ExhibitionSection exhibitionSectionID) {
         this.exhibitionSectionID = exhibitionSectionID;
     }
 
