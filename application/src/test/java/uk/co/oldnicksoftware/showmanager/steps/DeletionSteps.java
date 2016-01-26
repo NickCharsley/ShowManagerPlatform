@@ -8,8 +8,6 @@ package uk.co.oldnicksoftware.showmanager.steps;
 import cucumber.api.java.en.*;
 
 import cucumber.runtime.PendingException;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import uk.co.oldnicksoftware.showmanager.helpers.ConfirmObjectDeletionHelper;
 
 /**

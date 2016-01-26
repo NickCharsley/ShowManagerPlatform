@@ -22,6 +22,15 @@
                 <attr name="noIconInMenu" boolvalue="false"/>
             </file>
         </folder>
+        <folder name="LeafExhibitionSection">
+            <file name="org-openide-actions-DeleteAction.instance">
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.callback"/>
+                <attr name="key" stringvalue="delete"/>
+                <attr name="iconBase" stringvalue="uk/co/oldnicksoftware/showmanager/exhibition/view/delete.png"/>
+                <attr name="displayName" stringvalue="Delete Section"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+            </file>
+        </folder>
     </folder>    
     <folder name="Toolbars">
         <folder name="File">

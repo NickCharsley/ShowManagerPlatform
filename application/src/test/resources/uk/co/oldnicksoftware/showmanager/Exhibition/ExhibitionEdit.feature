@@ -42,6 +42,7 @@ Scenario: Edit a Non Default Exhibition Making it Default
       And The Exhibition List contains "Spring Show 2012"
       And The Exhibition List dosn't contain "Spring Show 2012 (Default)"
 
+
 Scenario: Edit a Default Exhibition Removing Default
     Given I edit Exhibition "Spring Show 2012"
      When I make the Exhibition no longer Default

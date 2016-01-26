@@ -6,6 +6,7 @@
 package uk.co.oldnicksoftware.showmanager.entityservice.memory.collection;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -14,6 +15,7 @@ import org.openide.awt.StatusDisplayer;
 import org.openide.util.lookup.ServiceProvider;
 import uk.co.oldnicksoftware.showmanager.api.capabilities.*;
 import uk.co.oldnicksoftware.showmanager.api.entities.SectionCollection;
+import uk.co.oldnicksoftware.showmanager.domain.ExhibitionSection;
 import uk.co.oldnicksoftware.showmanager.domain.Section;
 
 /**
@@ -24,6 +26,18 @@ import uk.co.oldnicksoftware.showmanager.domain.Section;
 public class SectionMemoryCollection extends MemoryCollection<Section> implements SectionCollection {
     private Map<Integer,Section> searchSectionsByID;
     private Map<String,Section> searchSectionsByName;
+
+    private void buildIndexes(){
+        //Clear All Indexes
+        searchSectionsByName.clear();
+        searchSectionsByID.clear();                                
+        //Rebuild them...
+        for (Iterator it = collection.iterator(); it.hasNext();) {
+            Section section = (Section)it.next();
+            searchSectionsByID.put(section.getId(),section);
+            searchSectionsByName.put(section.getName(), section);           
+        }        
+    }
 
     public SectionMemoryCollection(){
         searchSectionsByID=new HashMap();
@@ -46,8 +60,7 @@ public class SectionMemoryCollection extends MemoryCollection<Section> implement
                 }                
                 if (!searchSectionsByID.containsKey(section.getId())){
                     getSections().add(section);
-                    searchSectionsByID.put(section.getId(),section);
-                    searchSectionsByName.put(section.getName(), section);
+                    buildIndexes();
                 }
             }
         });
@@ -57,16 +70,20 @@ public class SectionMemoryCollection extends MemoryCollection<Section> implement
             public void remove(Section section) throws Exception {
                 if (searchSectionsByID.containsKey(section.getId())){
                     getSections().remove(section);
-                    searchSectionsByID.remove(section.getId());
-                    searchSectionsByName.remove(section.getName());
+                    section.unlink();
+                    buildIndexes();
                 }
             }            
 
             @Override
             public void removeAll() throws Exception {
-                getSections().clear();
+                for (Iterator it = getSections().iterator(); it.hasNext();) {
+                    Section section = (Section)it.next();
+                    section.unlink();
+                }           
+                collection.clear();
                 searchSectionsByID.clear();
-                searchSectionsByName.clear();                
+                searchSectionsByName.clear();
             }
         });
         // ... and a "Savable" ability:
@@ -78,8 +95,7 @@ public class SectionMemoryCollection extends MemoryCollection<Section> implement
 
             @Override
             public boolean isSavable(Section entity) {
-                return isAddable(entity); 
-                
+                return isAddable(entity);                 
             }
         });        
     }

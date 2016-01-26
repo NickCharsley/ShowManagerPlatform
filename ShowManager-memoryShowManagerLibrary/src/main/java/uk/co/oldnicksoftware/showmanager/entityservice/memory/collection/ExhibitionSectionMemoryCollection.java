@@ -6,6 +6,7 @@
 package uk.co.oldnicksoftware.showmanager.entityservice.memory.collection;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,10 +26,26 @@ public class ExhibitionSectionMemoryCollection extends MemoryCollection<Exhibiti
     private Map<Integer,ExhibitionSection> searchExhibitionSectionsByID;
     private Map<String,ExhibitionSection> searchExhibitionSectionsByName;
 
+    private void buildIndexes(){
+        //Clear All Indexes
+        searchExhibitionSectionsByName.clear();
+        searchExhibitionSectionsByID.clear();                                
+        //Rebuild them...
+        for (Iterator it = collection.iterator(); it.hasNext();) {
+            ExhibitionSection exhibitionSection = (ExhibitionSection)it.next();
+            searchExhibitionSectionsByID.put(exhibitionSection.getId(),exhibitionSection);
+            searchExhibitionSectionsByName.put(nameKey(exhibitionSection), exhibitionSection);           
+        }        
+    }
+
     private String nameKey(ExhibitionSection exhibitionSection){
-        return exhibitionSection.getExhibitionID().getName().concat(":->").concat(exhibitionSection.getSectionNumber());
+        try {
+            return exhibitionSection.getExhibitionID().getName().concat(":->").concat(exhibitionSection.getSectionNumber());
+        } catch (Exception e){
+            return e.getMessage();
+        }
     }    
-    
+        
     public ExhibitionSectionMemoryCollection(){
         searchExhibitionSectionsByID=new HashMap();
         searchExhibitionSectionsByName=new HashMap();
@@ -50,8 +67,7 @@ public class ExhibitionSectionMemoryCollection extends MemoryCollection<Exhibiti
                 }                
                 if (!searchExhibitionSectionsByID.containsKey(exhibitionSection.getId())){
                     getExhibitionSections().add(exhibitionSection);
-                    searchExhibitionSectionsByID.put(exhibitionSection.getId(),exhibitionSection);
-                    searchExhibitionSectionsByName.put(nameKey(exhibitionSection), exhibitionSection);
+                    buildIndexes();
                 }
             }
         });
@@ -61,16 +77,20 @@ public class ExhibitionSectionMemoryCollection extends MemoryCollection<Exhibiti
             public void remove(ExhibitionSection exhibitionSection) throws Exception {
                 if (searchExhibitionSectionsByID.containsKey(exhibitionSection.getId())){
                     getExhibitionSections().remove(exhibitionSection);
-                    searchExhibitionSectionsByID.remove(exhibitionSection.getId());
-                    searchExhibitionSectionsByName.remove(nameKey(exhibitionSection));
+                    exhibitionSection.unlink();
+                    buildIndexes();
                 }
             }            
 
             @Override
             public void removeAll() throws Exception {
-                getExhibitionSections().clear();
-                searchExhibitionSectionsByID.clear();
-                searchExhibitionSectionsByName.clear();                
+                for (Iterator it = collection.iterator(); it.hasNext();) {
+                    ExhibitionSection exhibitionSection = (ExhibitionSection)it.next();
+                    exhibitionSection.unlink();
+                }
+                collection.clear();
+                searchExhibitionSectionsByName.clear();
+                searchExhibitionSectionsByID.clear();                                
             }
         });
         // ... and a "Savable" ability:

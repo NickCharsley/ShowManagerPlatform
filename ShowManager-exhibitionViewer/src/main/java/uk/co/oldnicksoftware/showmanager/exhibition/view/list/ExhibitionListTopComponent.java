@@ -61,9 +61,9 @@ public final class ExhibitionListTopComponent extends TopComponent implements Ex
         putClientProperty(TopComponent.PROP_UNDOCKING_DISABLED, Boolean.TRUE);
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
 
-        ExhibitionCollection query = Lookup.getDefault().lookup(ExhibitionCollection.class);
-        RootNode node = new RootNode(query);
-        query.addRootNode(node);
+        ExhibitionCollection exhibitionCollection = Lookup.getDefault().lookup(ExhibitionCollection.class);
+        RootNode node = new RootNode(exhibitionCollection);
+        exhibitionCollection.addRootNode(node);
         explorerManager.setRootContext(node);
         
         ActionMap map = getActionMap();

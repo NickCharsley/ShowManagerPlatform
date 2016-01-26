@@ -5,14 +5,11 @@
  */
 package uk.co.oldnicksoftware.showmanager.helpers;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import org.openide.util.Lookup;
 import uk.co.oldnicksoftware.showmanager.api.entities.*;
-import uk.co.oldnicksoftware.showmanager.api.capabilities.CreatableEntityCapability;
-import uk.co.oldnicksoftware.showmanager.api.capabilities.RemovableEntityCapability;
-import uk.co.oldnicksoftware.showmanager.api.capabilities.SaveableEntityCapability;
+import uk.co.oldnicksoftware.showmanager.api.capabilities.*;
 import uk.co.oldnicksoftware.showmanager.domain.*;
 
 /**
@@ -60,9 +57,12 @@ public class CollectionHelper {
         return s;
     }
 
-    public ExhibitionSection createExhibitionSection(Exhibition exhibition,Section section,String name) throws Exception{
+    public ExhibitionSection createExhibitionSection(String exhibitionName,String sectionName,String name) throws Exception{
         assertThat("Have Exhibition Section Collection",exhibitionSectionCollection,is(notNullValue()));
 
+        Exhibition exhibition = createExhibition(exhibitionName);
+        Section section = createSection(sectionName);
+        
         ExhibitionSection es=exhibitionSectionCollection.getExhibitionSection(new ExhibitionSection(exhibition,section,name));
         
         CreatableEntityCapability cec = exhibitionSectionCollection.getLookup().lookup(CreatableEntityCapability.class);
@@ -98,9 +98,12 @@ public class CollectionHelper {
             exhibitionCollection.reload();
         }
     }    
-    
-    
-    private void buildExhibitions(String databaseType){
+        
+    private void buildDatabase(String databaseType) throws Exception{
+        if (databaseType.equalsIgnoreCase("full")){
+            createExhibitionSection("Spring Show 2011","Vegtables","1");
+            createExhibitionSection("Spring Show 2011","Flowers","2");
+        }        
     }
     
     private void emptyCollection(EntityCollection entity) throws Exception{
@@ -124,8 +127,7 @@ public class CollectionHelper {
             emptyCollection(exhibitionCollection);
             
             if (!databaseType.equalsIgnoreCase("an empty")){            
-                buildExhibitions(databaseType);
-  //              buildPurchaseOrders();
+                buildDatabase(databaseType);
             }        
         } finally {            
             exhibitionCollection.reload();

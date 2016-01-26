@@ -25,14 +25,17 @@ import uk.co.oldnicksoftware.showmanager.exhibition.view.api.nodes.ExhibitionNod
  * @author nick
  */
 public class RootNodeChildFactory extends ChildFactory<Exhibition> implements NodeListener{
-    private final ExhibitionCollection query;
-    public RootNodeChildFactory(ExhibitionCollection query) {
-        this.query = query;
+    private final ExhibitionCollection exhibitionCollection;
+    
+    public RootNodeChildFactory(ExhibitionCollection exhibitionCollection) {
+        this.exhibitionCollection = exhibitionCollection;
     }
+    
     @Override
     protected boolean createKeys(List<Exhibition> list) {
+        
         // get this ability from the lookup ...
-        ReloadableEntityCapability r = query.getLookup().lookup(ReloadableEntityCapability.class);
+        ReloadableEntityCapability r = exhibitionCollection.getLookup().lookup(ReloadableEntityCapability.class);
         // ... and  use the ability
         if (r != null) {
             try {
@@ -42,7 +45,7 @@ public class RootNodeChildFactory extends ChildFactory<Exhibition> implements No
             }
         }
         // Now populate the list of child entities...
-        list.addAll(query.getExhibitions());
+        list.addAll(exhibitionCollection.getExhibitions());
         // And return true since we're all set
         return true;
     }
@@ -50,7 +53,7 @@ public class RootNodeChildFactory extends ChildFactory<Exhibition> implements No
     @Override
     protected Node createNodeForKey(Exhibition key) {
         try {
-            ExhibitionNode cn= new ExhibitionNode(key,query);
+            ExhibitionNode cn= new ExhibitionNode(key,exhibitionCollection);
             cn.addNodeListener(this);
             return cn;
         } catch (IntrospectionException ex) {

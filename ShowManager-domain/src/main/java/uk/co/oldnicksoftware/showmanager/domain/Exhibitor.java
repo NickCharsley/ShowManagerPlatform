@@ -6,6 +6,7 @@
 package uk.co.oldnicksoftware.showmanager.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -53,19 +54,21 @@ public class Exhibitor implements Serializable {
     @Column(name = "Initials")
     private String initials;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exhibitorID")
-    private Collection<Exhibitionexhibitor> exhibitionexhibitorCollection;
+    private Collection<ExhibitionExhibitor> exhibitionExhibitorCollection;
 
     public Exhibitor() {
+        this(null,null,false);
     }
 
     public Exhibitor(Integer id) {
-        this.id = id;
+        this(id,null,false);
     }
 
     public Exhibitor(Integer id, String surname, boolean member) {
         this.id = id;
         this.surname = surname;
         this.member = member;
+        setExhibitionExhibitorCollection(new ArrayList());
     }
 
     public Integer getId() {
@@ -109,12 +112,12 @@ public class Exhibitor implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Exhibitionexhibitor> getExhibitionexhibitorCollection() {
-        return exhibitionexhibitorCollection;
+    public Collection<ExhibitionExhibitor> getExhibitionExhibitorCollection() {
+        return exhibitionExhibitorCollection;
     }
 
-    public void setExhibitionexhibitorCollection(Collection<Exhibitionexhibitor> exhibitionexhibitorCollection) {
-        this.exhibitionexhibitorCollection = exhibitionexhibitorCollection;
+    private void setExhibitionExhibitorCollection(Collection<ExhibitionExhibitor> exhibitionexhibitorCollection) {
+        this.exhibitionExhibitorCollection = exhibitionexhibitorCollection;
     }
 
     @Override

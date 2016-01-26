@@ -51,7 +51,7 @@ public class Prize implements Serializable {
     @Column(name = "Points")
     private Integer points;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "prizeID")
-    private Collection<Exhibitionclassprize> exhibitionclassprizeCollection;
+    private Collection<ExhibitionClassPrize> exhibitionclassprizeCollection;
 
     public Prize() {
     }
@@ -98,11 +98,11 @@ public class Prize implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Exhibitionclassprize> getExhibitionclassprizeCollection() {
+    public Collection<ExhibitionClassPrize> getExhibitionclassprizeCollection() {
         return exhibitionclassprizeCollection;
     }
 
-    public void setExhibitionclassprizeCollection(Collection<Exhibitionclassprize> exhibitionclassprizeCollection) {
+    public void setExhibitionclassprizeCollection(Collection<ExhibitionClassPrize> exhibitionclassprizeCollection) {
         this.exhibitionclassprizeCollection = exhibitionclassprizeCollection;
     }
 

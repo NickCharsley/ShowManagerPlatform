@@ -18,7 +18,8 @@ public class ExhibitionSectionSteps {
     private final ExhibitionListHelper exhibitionListHelper;
    
     private void z_nop() throws Throwable {
-        // Just exists to keep PendingException as an import
+        // Just exists to keep PendingException and sleep as an import
+        sleep(1);
         throw new PendingException();
     }    
 
@@ -39,4 +40,13 @@ public class ExhibitionSectionSteps {
         //if (type.equals("a")) sleep(5000);
         exhibitionListHelper.assertNodeInList(name,subName,type.equals("a"));
     }
+
+    @Given("^I request Exhibition \"([^\"]*)\" Section \"([^\"]*)\" be deleted$")
+    public void requestExhibitionSectionDeletion(String name, String subName) throws Throwable {
+        //sleep(50000);
+        
+        exhibitionListHelper.assertNodeInList(name,subName,true);
+        exhibitionListHelper.requestNodeDelete(name,subName);
+    }    
+
 }

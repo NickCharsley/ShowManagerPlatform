@@ -6,6 +6,7 @@
 package uk.co.oldnicksoftware.showmanager.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -54,7 +55,7 @@ public class ExhibitionSection implements Serializable {
     @ManyToOne(optional = false)
     private Section sectionID;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exhibitionSectionID")
-    private Collection<Exhibitionclass> exhibitionclassCollection;
+    private Collection<ExhibitionClass> exhibitionClassCollection;
 
     public ExhibitionSection() {
         this(null,null,"");
@@ -64,8 +65,19 @@ public class ExhibitionSection implements Serializable {
         link(exhibition);
         link(section);
         this.sectionNumber = sectionNumber;
+        this.setExhibitionClassCollection(new ArrayList());
     }
 
+    public void unlink(){
+        //Unlink All
+        unlink(exhibitionID);
+        unlink(sectionID);
+        for(ExhibitionClass exhibitionClass:exhibitionClassCollection){
+            unlink(exhibitionClass);
+        }
+    }
+
+    
     public Integer getId() {
         return id;
     }
@@ -90,14 +102,10 @@ public class ExhibitionSection implements Serializable {
         this.description = description;
     }
 
-    public Exhibition getExhibitionID() {
-        return exhibitionID;
-    }
-
     private boolean updateCycle = false;
-    
+        
     public final void unlink(Exhibition exhibitionID) {
-        ExhibitionSection.this.link((Exhibition) null);
+        link((Exhibition) null);
     }
     
     public final void link(Exhibition exhibitionID) {
@@ -115,8 +123,8 @@ public class ExhibitionSection implements Serializable {
         updateCycle=false;
     }
 
-    public Section getSectionID() {
-        return sectionID;
+    public Exhibition getExhibitionID() {
+        return exhibitionID;
     }
 
     public final void unlink(Section sectionID) {
@@ -138,13 +146,39 @@ public class ExhibitionSection implements Serializable {
         updateCycle=false;
     }
 
-    @XmlTransient
-    public Collection<Exhibitionclass> getExhibitionclassCollection() {
-        return exhibitionclassCollection;
+    public Section getSectionID() {
+        return sectionID;
     }
 
-    public void setExhibitionclassCollection(Collection<Exhibitionclass> exhibitionclassCollection) {
-        this.exhibitionclassCollection = exhibitionclassCollection;
+    public void link(ExhibitionClass exhibitionClass){
+        if (updateCycle) return;
+        if (exhibitionClass==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (!exhibitionClassCollection.contains(exhibitionClass)){
+            exhibitionClassCollection.add(exhibitionClass);
+            exhibitionClass.link(this);
+        }
+        updateCycle=false;
+    }
+        
+    public void unlink(ExhibitionClass exhibitionClass){
+        if (updateCycle) return;
+        if (exhibitionClass==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (exhibitionClassCollection.contains(exhibitionClass)){
+            exhibitionClassCollection.remove(exhibitionClass);
+            exhibitionClass.unlink(this);
+        }
+        updateCycle=false;        
+    }
+    
+    @XmlTransient
+    public Collection<ExhibitionClass> getExhibitionClassCollection() {
+        return exhibitionClassCollection;
+    }
+
+    private void setExhibitionClassCollection(Collection<ExhibitionClass> exhibitionClassCollection) {
+        this.exhibitionClassCollection = exhibitionClassCollection;
     }
 
     @Override

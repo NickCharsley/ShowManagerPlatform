@@ -65,10 +65,13 @@ public class ExhibitionListHelper {
     }
 
     public void assertNodeInList(String name,String subName,boolean find){    
-        assertThat("Found the "+name+" name",(findNodeInList(name,subName)!=null),is(find));                
+        String test="Found the ".concat(name).concat(" name");
+        if (subName.length()>0){
+            test=test.concat(" ").concat(subName).concat(" sub-name");
+        }
+        assertThat(test,findNodeInList(name,subName)!=null,is(find));                
     }
 
-    
     public void assertNodeInList(String name,boolean find){    
         assertNodeInList(name,"",find);
     }
@@ -86,10 +89,14 @@ public class ExhibitionListHelper {
     }    
     
     public void requestNodeDelete(String name){
+        requestNodeDelete(name,"");
+    }
+    
+    public void requestNodeDelete(String name,String subName){
         String toolbar="&File";
         String item="Delete";
         
-        findNodeInList(name).select();
+        findNodeInList(name,subName).select();
         MainWindowOperator mwo = MainWindowOperator.getDefault();
         ContainerOperator tbo=mwo.getToolbar(toolbar);        
         assertThat("Found Toolbar "+toolbar,tbo,is(notNullValue()));

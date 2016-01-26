@@ -46,7 +46,7 @@ public class Sponsorship implements Serializable {
     private String prize;
     @JoinColumn(name = "ExhibitionClassPrizeID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
-    private Exhibitionclassprize exhibitionClassPrizeID;
+    private ExhibitionClassPrize exhibitionClassPrizeID;
 
     public Sponsorship() {
     }
@@ -85,11 +85,11 @@ public class Sponsorship implements Serializable {
         this.prize = prize;
     }
 
-    public Exhibitionclassprize getExhibitionClassPrizeID() {
+    public ExhibitionClassPrize getExhibitionClassPrizeID() {
         return exhibitionClassPrizeID;
     }
 
-    public void setExhibitionClassPrizeID(Exhibitionclassprize exhibitionClassPrizeID) {
+    public void setExhibitionClassPrizeID(ExhibitionClassPrize exhibitionClassPrizeID) {
         this.exhibitionClassPrizeID = exhibitionClassPrizeID;
     }
 

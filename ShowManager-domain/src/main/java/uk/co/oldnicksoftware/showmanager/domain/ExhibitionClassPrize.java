@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Exhibitionclassprize.findById", query = "SELECT e FROM Exhibitionclassprize e WHERE e.id = :id"),
     @NamedQuery(name = "Exhibitionclassprize.findByPrize", query = "SELECT e FROM Exhibitionclassprize e WHERE e.prize = :prize"),
     @NamedQuery(name = "Exhibitionclassprize.findByPoints", query = "SELECT e FROM Exhibitionclassprize e WHERE e.points = :points")})
-public class Exhibitionclassprize implements Serializable {
+public class ExhibitionClassPrize implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,18 +52,18 @@ public class Exhibitionclassprize implements Serializable {
     private Collection<Sponsorship> sponsorshipCollection;
     @JoinColumn(name = "ExhibitionClassID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
-    private Exhibitionclass exhibitionClassID;
+    private ExhibitionClass exhibitionClassID;
     @JoinColumn(name = "ExhibitionExhibitorID", referencedColumnName = "ID")
     @ManyToOne
-    private Exhibitionexhibitor exhibitionExhibitorID;
+    private ExhibitionExhibitor exhibitionExhibitorID;
     @JoinColumn(name = "PrizeID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Prize prizeID;
 
-    public Exhibitionclassprize() {
+    public ExhibitionClassPrize() {
     }
 
-    public Exhibitionclassprize(Integer id) {
+    public ExhibitionClassPrize(Integer id) {
         this.id = id;
     }
 
@@ -100,19 +100,36 @@ public class Exhibitionclassprize implements Serializable {
         this.sponsorshipCollection = sponsorshipCollection;
     }
 
-    public Exhibitionclass getExhibitionClassID() {
+    public ExhibitionClass getExhibitionClassID() {
         return exhibitionClassID;
     }
 
-    public void setExhibitionClassID(Exhibitionclass exhibitionClassID) {
-        this.exhibitionClassID = exhibitionClassID;
+    private boolean updateCycle = false;
+    
+    public final void unlink(ExhibitionClass exhibitionClassID) {
+        link((ExhibitionClass) null);
+    }
+    
+    public final void link(ExhibitionClass exhibitionClassID) {
+        if (updateCycle) return;
+        updateCycle=true;
+        if (this.exhibitionClassID != exhibitionClassID){
+            if (this.exhibitionClassID != null){
+                this.exhibitionClassID.unlink(this);
+            }
+        }
+        if (exhibitionClassID!=null){
+            exhibitionClassID.link(this);
+        }       
+        this.exhibitionClassID=exhibitionClassID;
+        updateCycle=false;
     }
 
-    public Exhibitionexhibitor getExhibitionExhibitorID() {
+    public ExhibitionExhibitor getExhibitionExhibitorID() {
         return exhibitionExhibitorID;
     }
 
-    public void setExhibitionExhibitorID(Exhibitionexhibitor exhibitionExhibitorID) {
+    public void setExhibitionExhibitorID(ExhibitionExhibitor exhibitionExhibitorID) {
         this.exhibitionExhibitorID = exhibitionExhibitorID;
     }
 
@@ -134,10 +151,10 @@ public class Exhibitionclassprize implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Exhibitionclassprize)) {
+        if (!(object instanceof ExhibitionClassPrize)) {
             return false;
         }
-        Exhibitionclassprize other = (Exhibitionclassprize) object;
+        ExhibitionClassPrize other = (ExhibitionClassPrize) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

@@ -23,16 +23,16 @@ import uk.co.oldnicksoftware.showmanager.exhibition.view.wizard.NewExhibitionWiz
  * @author nick
  */
 public class RootNode extends AbstractNode {
-    private ExhibitionCollection query;
+    private ExhibitionCollection exhibitionCollection;
     private InstanceContent instanceContent;
     private NewExhibitionWizardAction newExhibition;
     
-    public RootNode(ExhibitionCollection query) {
-        this(query, new InstanceContent());
+    public RootNode(ExhibitionCollection exhibitionCollection) {
+        this(exhibitionCollection,new InstanceContent());
     }
-    private RootNode(ExhibitionCollection query, InstanceContent ic) {
-        super(Children.create(new RootNodeChildFactory(query), true), new AbstractLookup(ic));
-        this.query = query;
+    private RootNode(ExhibitionCollection exhibitionCollection,InstanceContent ic) {
+        super(Children.create(new RootNodeChildFactory(exhibitionCollection), true), new AbstractLookup(ic));
+        this.exhibitionCollection=exhibitionCollection;
         this.instanceContent = ic;
         // Add a new ability for this node to be reloaded
         this.instanceContent.add(new ReloadableViewCapability() {
@@ -41,7 +41,7 @@ public class RootNode extends AbstractNode {
                 // To reload this node just set a new set of children
                 // using a RootNodeChildFactory object, that retrieves
                 // children asynchronously                
-                setChildren(Children.create(new RootNodeChildFactory(RootNode.this.query), false));                         
+                setChildren(Children.create(new RootNodeChildFactory(RootNode.this.exhibitionCollection), false));                         
             }
         });
         newExhibition=new NewExhibitionWizardAction();
@@ -62,6 +62,5 @@ public class RootNode extends AbstractNode {
     @Override
     public NewType[] getNewTypes() {
         return new NewType[]{newExhibition};
-    }
-    
+    }    
 }

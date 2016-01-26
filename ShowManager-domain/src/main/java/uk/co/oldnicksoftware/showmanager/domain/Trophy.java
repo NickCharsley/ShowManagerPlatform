@@ -6,6 +6,7 @@
 package uk.co.oldnicksoftware.showmanager.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -48,22 +49,31 @@ public class Trophy implements Serializable {
     @Column(name = "Member")
     private boolean member;
     @OneToMany(mappedBy = "trophyID")
-    private Collection<Exhibitiontrophyclass> exhibitiontrophyclassCollection;
+    private Collection<ExhibitionTrophyClass> exhibitionTrophyClassCollection;
     @JoinColumn(name = "ExhibitionID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Exhibition exhibitionID;
 
     public Trophy() {
+        this(null,null,false);
     }
 
     public Trophy(Integer id) {
-        this.id = id;
+        this(id,null,false);
     }
 
     public Trophy(Integer id, String name, boolean member) {
         this.id = id;
         this.name = name;
         this.member = member;
+        this.setExhibitionTrophyClassCollection(new ArrayList());
+    }
+    
+    public void unlink(){
+        unlink(exhibitionID);
+        for(ExhibitionTrophyClass exhibitionTrophyClass:exhibitionTrophyClassCollection){
+            unlink(exhibitionTrophyClass);
+        }
     }
 
     public Integer getId() {
@@ -90,21 +100,60 @@ public class Trophy implements Serializable {
         this.member = member;
     }
 
-    @XmlTransient
-    public Collection<Exhibitiontrophyclass> getExhibitiontrophyclassCollection() {
-        return exhibitiontrophyclassCollection;
+    public void link(ExhibitionTrophyClass exhibitionTrophyClass){
+        if (updateCycle) return;
+        if (exhibitionTrophyClass==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (!exhibitionTrophyClassCollection.contains(exhibitionTrophyClass)){
+            exhibitionTrophyClassCollection.add(exhibitionTrophyClass);
+            exhibitionTrophyClass.link(this);
+        }
+        updateCycle=false;
+    }
+        
+    public void unlink(ExhibitionTrophyClass exhibitionTrophyClass){
+        if (updateCycle) return;
+        if (exhibitionTrophyClass==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (exhibitionTrophyClassCollection.contains(exhibitionTrophyClass)){
+            exhibitionTrophyClassCollection.remove(exhibitionTrophyClass);
+            exhibitionTrophyClass.unlink(this);
+        }
+        updateCycle=false;        
     }
 
-    public void setExhibitiontrophyclassCollection(Collection<Exhibitiontrophyclass> exhibitiontrophyclassCollection) {
-        this.exhibitiontrophyclassCollection = exhibitiontrophyclassCollection;
+    @XmlTransient
+    public Collection<ExhibitionTrophyClass> getExhibitionTrophyClassCollection() {
+        return exhibitionTrophyClassCollection;
+    }
+
+    private void setExhibitionTrophyClassCollection(Collection<ExhibitionTrophyClass> exhibitionTrophyClassCollection) {
+        this.exhibitionTrophyClassCollection = exhibitionTrophyClassCollection;
     }
 
     public Exhibition getExhibitionID() {
         return exhibitionID;
     }
 
-    public void setExhibitionID(Exhibition exhibitionID) {
-        this.exhibitionID = exhibitionID;
+    private boolean updateCycle = false;
+    
+    public final void unlink(Exhibition exhibitionID) {
+        link((Exhibition) null);
+    }
+    
+    public final void link(Exhibition exhibitionID) {
+        if (updateCycle) return;
+        updateCycle=true;
+        if (this.exhibitionID != exhibitionID){
+            if (this.exhibitionID != null){
+                this.exhibitionID.unlink(this);
+            }
+        }
+        if (exhibitionID!=null){
+            exhibitionID.link(this);
+        }       
+        this.exhibitionID=exhibitionID;
+        updateCycle=false;
     }
 
     @Override

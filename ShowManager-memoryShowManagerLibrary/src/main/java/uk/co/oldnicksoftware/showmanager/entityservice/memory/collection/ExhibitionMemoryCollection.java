@@ -6,6 +6,7 @@
 package uk.co.oldnicksoftware.showmanager.entityservice.memory.collection;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -14,6 +15,8 @@ import org.openide.awt.StatusDisplayer;
 import org.openide.util.lookup.ServiceProvider;
 import uk.co.oldnicksoftware.showmanager.api.entities.ExhibitionCollection;
 import uk.co.oldnicksoftware.showmanager.api.capabilities.*;
+import uk.co.oldnicksoftware.showmanager.domain.Exhibition;
+import uk.co.oldnicksoftware.showmanager.domain.Exhibition;
 import uk.co.oldnicksoftware.showmanager.domain.Exhibition;
 
 /**
@@ -24,6 +27,18 @@ import uk.co.oldnicksoftware.showmanager.domain.Exhibition;
 public class ExhibitionMemoryCollection extends MemoryCollection<Exhibition> implements ExhibitionCollection<Exhibition>{
     private Map<Integer,Exhibition> searchExhibitionsByID;
     private Map<String,Exhibition> searchExhibitionsByName;
+
+    private void buildIndexes(){
+        //Clear All Indexes
+        searchExhibitionsByName.clear();
+        searchExhibitionsByID.clear();                                
+        //Rebuild them...
+        for (Iterator it = collection.iterator(); it.hasNext();) {
+            Exhibition exhibition = (Exhibition)it.next();
+            searchExhibitionsByID.put(exhibition.getId(),exhibition);
+            searchExhibitionsByName.put(exhibition.getName(), exhibition);           
+        }        
+    }
 
     public ExhibitionMemoryCollection(){
         searchExhibitionsByID=new HashMap();
@@ -46,8 +61,7 @@ public class ExhibitionMemoryCollection extends MemoryCollection<Exhibition> imp
                 }                
                 if (!searchExhibitionsByID.containsKey(exhibition.getId())){
                     getExhibitions().add(exhibition);
-                    searchExhibitionsByID.put(exhibition.getId(),exhibition);
-                    searchExhibitionsByName.put(exhibition.getName(), exhibition);
+                    buildIndexes();
                 }
             }
         });
@@ -57,16 +71,20 @@ public class ExhibitionMemoryCollection extends MemoryCollection<Exhibition> imp
             public void remove(Exhibition exhibition) throws Exception {
                 if (searchExhibitionsByID.containsKey(exhibition.getId())){
                     getExhibitions().remove(exhibition);
-                    searchExhibitionsByID.remove(exhibition.getId());
-                    searchExhibitionsByName.remove(exhibition.getName());
+                    exhibition.unlink();
+                    buildIndexes();
                 }
             }            
 
             @Override
             public void removeAll() throws Exception {
-                getExhibitions().clear();
+                for (Iterator it = getExhibitions().iterator(); it.hasNext();) {
+                    Exhibition exhibition = (Exhibition)it.next();
+                    exhibition.unlink();
+                }           
+                collection.clear();
                 searchExhibitionsByID.clear();
-                searchExhibitionsByName.clear();                
+                searchExhibitionsByName.clear();
             }
         });
         // ... and a "Savable" ability:
@@ -78,8 +96,7 @@ public class ExhibitionMemoryCollection extends MemoryCollection<Exhibition> imp
 
             @Override
             public boolean isSavable(Exhibition entity) {
-                return isAddable(entity); 
-                
+                return isAddable(entity);                 
             }
         });        
     }

@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Exhibitionexhibitor.findAll", query = "SELECT e FROM Exhibitionexhibitor e"),
     @NamedQuery(name = "Exhibitionexhibitor.findById", query = "SELECT e FROM Exhibitionexhibitor e WHERE e.id = :id"),
     @NamedQuery(name = "Exhibitionexhibitor.findByExhibitorNumber", query = "SELECT e FROM Exhibitionexhibitor e WHERE e.exhibitorNumber = :exhibitorNumber")})
-public class Exhibitionexhibitor implements Serializable {
+public class ExhibitionExhibitor implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,7 @@ public class Exhibitionexhibitor implements Serializable {
     @Column(name = "ExhibitorNumber")
     private int exhibitorNumber;
     @OneToMany(mappedBy = "exhibitionExhibitorID")
-    private Collection<Exhibitionclassprize> exhibitionclassprizeCollection;
+    private Collection<ExhibitionClassPrize> exhibitionclassprizeCollection;
     @JoinColumn(name = "ExhibitionID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Exhibition exhibitionID;
@@ -52,14 +52,14 @@ public class Exhibitionexhibitor implements Serializable {
     @ManyToOne(optional = false)
     private Exhibitor exhibitorID;
 
-    public Exhibitionexhibitor() {
+    public ExhibitionExhibitor() {
     }
 
-    public Exhibitionexhibitor(Integer id) {
+    public ExhibitionExhibitor(Integer id) {
         this.id = id;
     }
 
-    public Exhibitionexhibitor(Integer id, int exhibitorNumber) {
+    public ExhibitionExhibitor(Integer id, int exhibitorNumber) {
         this.id = id;
         this.exhibitorNumber = exhibitorNumber;
     }
@@ -81,11 +81,11 @@ public class Exhibitionexhibitor implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Exhibitionclassprize> getExhibitionclassprizeCollection() {
+    public Collection<ExhibitionClassPrize> getExhibitionclassprizeCollection() {
         return exhibitionclassprizeCollection;
     }
 
-    public void setExhibitionclassprizeCollection(Collection<Exhibitionclassprize> exhibitionclassprizeCollection) {
+    public void setExhibitionclassprizeCollection(Collection<ExhibitionClassPrize> exhibitionclassprizeCollection) {
         this.exhibitionclassprizeCollection = exhibitionclassprizeCollection;
     }
 
@@ -93,8 +93,25 @@ public class Exhibitionexhibitor implements Serializable {
         return exhibitionID;
     }
 
-    public void setExhibitionID(Exhibition exhibitionID) {
-        this.exhibitionID = exhibitionID;
+    private boolean updateCycle=false;
+    
+    public final void unlink(Exhibition exhibitionID) {
+        link((Exhibition) null);
+    }
+    
+    public final void link(Exhibition exhibitionID) {
+        if (updateCycle) return;
+        updateCycle=true;
+        if (this.exhibitionID != exhibitionID){
+            if (this.exhibitionID != null){
+                this.exhibitionID.unlink(this);
+            }
+        }
+        if (exhibitionID!=null){
+            exhibitionID.link(this);
+        }       
+        this.exhibitionID=exhibitionID;
+        updateCycle=false;
     }
 
     public Exhibitor getExhibitorID() {
@@ -115,10 +132,10 @@ public class Exhibitionexhibitor implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Exhibitionexhibitor)) {
+        if (!(object instanceof ExhibitionExhibitor)) {
             return false;
         }
-        Exhibitionexhibitor other = (Exhibitionexhibitor) object;
+        ExhibitionExhibitor other = (ExhibitionExhibitor) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

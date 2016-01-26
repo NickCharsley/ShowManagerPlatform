@@ -6,8 +6,9 @@
 package uk.co.oldnicksoftware.showmanager.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -45,10 +46,10 @@ public class Exhibition implements Serializable {
     private Collection<Trophy> trophyCollection;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exhibitionID")
-    private Collection<Exhibitionexhibitor> exhibitionexhibitorCollection;
+    private Collection<ExhibitionExhibitor> exhibitionExhibitorCollection;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exhibitionID")
-    private Collection<Exhibitionclass> exhibitionclassCollection;
+    private Collection<ExhibitionClass> exhibitionClassCollection;
 
     public Exhibition() {
         this(null,null);
@@ -59,10 +60,10 @@ public class Exhibition implements Serializable {
     }
 
     public Exhibition(Integer id, String name) {
-        setExhibitionclassCollection(new ArrayList());
-        setExhibitionexhibitorCollection(new ArrayList());
-        setTrophyCollection(new ArrayList());
-        setExhibitionSectionCollection(new ArrayList());
+        setExhibitionClassCollection(new CopyOnWriteArrayList());
+        setExhibitionExhibitorCollection(new CopyOnWriteArrayList());
+        setTrophyCollection(new CopyOnWriteArrayList());
+        setExhibitionSectionCollection(new CopyOnWriteArrayList());
 
         this.id = id;
         this.name = name;
@@ -90,6 +91,24 @@ public class Exhibition implements Serializable {
     
     private boolean updateCycle = false;
 
+    public void unlink(){
+        //Unlink Everything !!!        
+        //N.B. we use the toArray() trick to prevent concurent updates
+        unlink(defaults);
+        for (Object exhibitionSection:exhibitionSectionCollection.toArray()) {
+            unlink((ExhibitionSection)exhibitionSection);
+        }
+        for (Object exhibitionClass:exhibitionClassCollection.toArray()) {
+            unlink((ExhibitionClass)exhibitionClass);
+        }
+        for (Object exhibitionExhibitor:exhibitionExhibitorCollection.toArray()){
+            unlink((ExhibitionExhibitor)exhibitionExhibitor);
+        }
+        for (Object trophy:trophyCollection.toArray()){
+            unlink((Trophy)trophy);
+        }
+    }
+    
     public void unlink(Defaults defaults){
         link((Defaults)null);
     }
@@ -116,15 +135,6 @@ public class Exhibition implements Serializable {
     public boolean isDefault(){
         return defaults!=null;
     }
-    
-    @XmlTransient
-    public Collection<ExhibitionSection> getExhibitionSectionCollection() {
-        return exhibitionSectionCollection;
-    }
-
-    private void setExhibitionSectionCollection(Collection<ExhibitionSection> exhibitionsectionCollection) {
-        this.exhibitionSectionCollection = exhibitionsectionCollection;
-    }
 
     public void link(ExhibitionSection exhibitionSection){
         if (updateCycle) return;
@@ -146,8 +156,39 @@ public class Exhibition implements Serializable {
             exhibitionSection.unlink(this);
         }
         updateCycle=false;        
-    }
+    }    
     
+    @XmlTransient
+    public Collection<ExhibitionSection> getExhibitionSectionCollection() {
+        return exhibitionSectionCollection;
+    }
+
+    private void setExhibitionSectionCollection(Collection<ExhibitionSection> exhibitionsectionCollection) {
+        this.exhibitionSectionCollection = exhibitionsectionCollection;
+    }
+
+    public void link(Trophy trophy){
+        if (updateCycle) return;
+        if (trophy==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (!trophyCollection.contains(trophy)){
+            trophyCollection.add(trophy);
+            trophy.link(this);
+        }
+        updateCycle=false;
+    }
+
+    public void unlink(Trophy trophy){
+        if (updateCycle) return;
+        if (trophy==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (trophyCollection.contains(trophy)){
+            trophyCollection.remove(trophy);
+            trophy.unlink(this);
+        }
+        updateCycle=false;        
+    }    
+
     @XmlTransient
     public Collection<Trophy> getTrophyCollection() {
         return trophyCollection;
@@ -157,22 +198,66 @@ public class Exhibition implements Serializable {
         this.trophyCollection = trophyCollection;
     }
 
+    public void link(ExhibitionExhibitor exhibitionExhibitor){
+        if (updateCycle) return;
+        if (exhibitionExhibitor==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (!exhibitionExhibitorCollection.contains(exhibitionExhibitor)){
+            exhibitionExhibitorCollection.add(exhibitionExhibitor);
+            exhibitionExhibitor.link(this);
+        }
+        updateCycle=false;
+    }
+        
+    public void unlink(ExhibitionExhibitor exhibitionExhibitor){
+        if (updateCycle) return;
+        if (exhibitionExhibitor==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (exhibitionExhibitorCollection.contains(exhibitionExhibitor)){
+            exhibitionExhibitorCollection.remove(exhibitionExhibitor);
+            exhibitionExhibitor.unlink(this);
+        }
+        updateCycle=false;        
+    }
+
     @XmlTransient
-    public Collection<Exhibitionexhibitor> getExhibitionexhibitorCollection() {
-        return exhibitionexhibitorCollection;
+    public Collection<ExhibitionExhibitor> getExhibitionExhibitorCollection() {
+        return exhibitionExhibitorCollection;
     }
 
-    private void setExhibitionexhibitorCollection(Collection<Exhibitionexhibitor> exhibitionexhibitorCollection) {
-        this.exhibitionexhibitorCollection = exhibitionexhibitorCollection;
+    private void setExhibitionExhibitorCollection(Collection<ExhibitionExhibitor> exhibitionexhibitorCollection) {
+        this.exhibitionExhibitorCollection = exhibitionexhibitorCollection;
     }
 
+    public void link(ExhibitionClass exhibitionClass){
+        if (updateCycle) return;
+        if (exhibitionClass==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (!exhibitionClassCollection.contains(exhibitionClass)){
+            exhibitionClassCollection.add(exhibitionClass);
+            exhibitionClass.link(this);
+        }
+        updateCycle=false;
+    }
+        
+    public void unlink(ExhibitionClass exhibitionClass){
+        if (updateCycle) return;
+        if (exhibitionClass==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (exhibitionClassCollection.contains(exhibitionClass)){
+            exhibitionClassCollection.remove(exhibitionClass);
+            exhibitionClass.unlink(this);
+        }
+        updateCycle=false;        
+    }
+    
     @XmlTransient
-    public Collection<Exhibitionclass> getExhibitionclassCollection() {
-        return exhibitionclassCollection;
+    public Collection<ExhibitionClass> getExhibitionClassCollection() {
+        return exhibitionClassCollection;
     }
 
-    private void setExhibitionclassCollection(Collection<Exhibitionclass> exhibitionclassCollection) {
-        this.exhibitionclassCollection = exhibitionclassCollection;
+    private void setExhibitionClassCollection(Collection<ExhibitionClass> exhibitionClassCollection) {
+        this.exhibitionClassCollection = exhibitionClassCollection;
     }
 
     @Override

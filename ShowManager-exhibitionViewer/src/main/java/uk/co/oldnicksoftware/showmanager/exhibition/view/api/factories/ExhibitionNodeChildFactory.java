@@ -8,13 +8,10 @@ package uk.co.oldnicksoftware.showmanager.exhibition.view.api.factories;
 import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
-import org.openide.nodes.ChildFactory;
-import org.openide.nodes.Node;
-import org.openide.nodes.NodeEvent;
-import org.openide.nodes.NodeListener;
-import org.openide.nodes.NodeMemberEvent;
-import org.openide.nodes.NodeReorderEvent;
+import org.openide.nodes.*;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
+import uk.co.oldnicksoftware.showmanager.api.entities.ExhibitionSectionCollection;
 import uk.co.oldnicksoftware.showmanager.domain.Exhibition;
 import uk.co.oldnicksoftware.showmanager.domain.ExhibitionSection;
 import uk.co.oldnicksoftware.showmanager.exhibition.view.api.nodes.ExhibitionSectionNode;
@@ -25,9 +22,11 @@ import uk.co.oldnicksoftware.showmanager.exhibition.view.api.nodes.ExhibitionSec
  */
 public class ExhibitionNodeChildFactory extends ChildFactory<ExhibitionSection> implements NodeListener {
     private final Exhibition exhibition;
+    private final ExhibitionSectionCollection exhibitionSectionCollection;
     
     public ExhibitionNodeChildFactory(Exhibition exhibition){
         this.exhibition=exhibition;
+        exhibitionSectionCollection = Lookup.getDefault().lookup(ExhibitionSectionCollection.class);            
     }
     
     @Override
@@ -39,7 +38,7 @@ public class ExhibitionNodeChildFactory extends ChildFactory<ExhibitionSection> 
     @Override
     protected Node createNodeForKey(ExhibitionSection key) {
         try {
-            ExhibitionSectionNode cn= new ExhibitionSectionNode(key);
+            ExhibitionSectionNode cn= new ExhibitionSectionNode(key,exhibitionSectionCollection);
             cn.addNodeListener(this);
             return cn;
         } catch (IntrospectionException ex) {

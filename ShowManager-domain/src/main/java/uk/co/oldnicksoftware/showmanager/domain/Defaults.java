@@ -34,12 +34,17 @@ public class Defaults implements Serializable {
     private Exhibition showID;
 
     public Defaults() {
+        this(null);
     }
 
     public Defaults(Integer id) {
         this.id = id;
     }
 
+    public void unlink(){
+        unlink(showID);
+    }
+    
     public Integer getId() {
         return id;
     }

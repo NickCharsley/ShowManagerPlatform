@@ -51,7 +51,7 @@ public class DefaultsMemorySingleton extends MemorySingleton implements Defaults
                 /**
                  * Remove actually just 'Cleans' the data
                  */
-                defaults.link(null);
+                defaults.unlink();
                 defaults.setShowName("");
             }            
             @Override

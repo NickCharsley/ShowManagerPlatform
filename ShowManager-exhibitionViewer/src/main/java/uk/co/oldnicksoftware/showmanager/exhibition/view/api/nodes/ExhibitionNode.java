@@ -28,14 +28,14 @@ import uk.co.oldnicksoftware.showmanager.exhibition.view.wizard.NewExhibitionWiz
 public class ExhibitionNode extends BeanNode {
     private NewExhibitionWizardAction newExhibition;
     
-    public ExhibitionNode(Exhibition exhibition, ExhibitionCollection query)  throws IntrospectionException {
-        this(exhibition, query, new InstanceContent());
+    public ExhibitionNode(Exhibition exhibition, ExhibitionCollection exhibitionCollection)  throws IntrospectionException {
+        this(exhibition, exhibitionCollection, new InstanceContent());
     }
     
-    private ExhibitionNode(final Exhibition exhibition, final ExhibitionCollection query, InstanceContent instanceContent)  throws IntrospectionException {
+    private ExhibitionNode(final Exhibition exhibition, final ExhibitionCollection exhibitionCollection, InstanceContent instanceContent)  throws IntrospectionException {
         super(exhibition, (exhibition.getExhibitionSectionCollection().isEmpty()?Children.LEAF:Children.create(new ExhibitionNodeChildFactory(exhibition), false)), new AbstractLookup(instanceContent)); 
         instanceContent.add(exhibition);
-        instanceContent.add(query);
+        instanceContent.add(exhibitionCollection);
         instanceContent.add(new ReloadableViewCapability() {
             @Override
             public void reloadChildren() throws Exception {
@@ -51,6 +51,7 @@ public class ExhibitionNode extends BeanNode {
     public NewType[] getNewTypes() {
         return new NewType[]{newExhibition};
     }
+    
     @Override
     public Action[] getActions(boolean context) {
         return new Action[]{(SystemAction.get(DeleteAction.class))};
@@ -62,8 +63,8 @@ public class ExhibitionNode extends BeanNode {
     @Override
     public void destroy() throws IOException {
         Exhibition exhibition = getLookup().lookup(Exhibition.class);
-        ExhibitionCollection query = getLookup().lookup(ExhibitionCollection.class);
-        RemovableEntityCapability cec = query.getLookup().lookup(RemovableEntityCapability.class);
+        ExhibitionCollection exhibitionCollection = getLookup().lookup(ExhibitionCollection.class);
+        RemovableEntityCapability cec = exhibitionCollection.getLookup().lookup(RemovableEntityCapability.class);
         try {
             cec.remove(exhibition);
         } catch (Exception e) {

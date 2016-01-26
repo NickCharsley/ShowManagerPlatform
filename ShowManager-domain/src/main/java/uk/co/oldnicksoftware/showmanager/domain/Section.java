@@ -55,11 +55,17 @@ public class Section implements Serializable {
     }
 
     public Section(Integer id, String name) {
-        this.setExhibitionSectionCollection(new ArrayList());
         this.id = id;
         this.name = name;
+        setExhibitionSectionCollection(new ArrayList());
     }
 
+    public void unlink(){
+        for (ExhibitionSection exhibitionSection:exhibitionSectionCollection){
+            unlink(exhibitionSection);
+        }
+    }
+    
     public Section(String name) {
         this(null,name);
     }

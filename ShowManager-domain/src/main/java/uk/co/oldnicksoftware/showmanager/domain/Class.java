@@ -6,6 +6,7 @@
 package uk.co.oldnicksoftware.showmanager.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -46,18 +47,28 @@ public class Class implements Serializable {
     @Column(name = "Description")
     private String description;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "classID")
-    private Collection<Exhibitionclass> exhibitionclassCollection;
+    private Collection<ExhibitionClass> exhibitionClassCollection;
 
+    private boolean updateCycle=true;
+    
     public Class() {
+        this(null,null);
     }
 
     public Class(Integer id) {
-        this.id = id;
+        this(id,null);
     }
 
     public Class(Integer id, String name) {
         this.id = id;
         this.name = name;
+        setExhibitionClassCollection(new ArrayList());
+    }
+    
+    public void unlink(){
+        for (ExhibitionClass exhibitionClass:exhibitionClassCollection){
+            unlink(exhibitionClass);
+        }
     }
 
     public Integer getId() {
@@ -84,13 +95,35 @@ public class Class implements Serializable {
         this.description = description;
     }
 
-    @XmlTransient
-    public Collection<Exhibitionclass> getExhibitionclassCollection() {
-        return exhibitionclassCollection;
+    public void link(ExhibitionClass exhibitionClass){
+        if (updateCycle) return;
+        if (exhibitionClass==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (!exhibitionClassCollection.contains(exhibitionClass)){
+            exhibitionClassCollection.add(exhibitionClass);
+            exhibitionClass.link(this);
+        }
+        updateCycle=false;
+    }
+        
+    public void unlink(ExhibitionClass exhibitionClass){
+        if (updateCycle) return;
+        if (exhibitionClass==null) return;//Not the way to clear it..
+        updateCycle=true;
+        if (exhibitionClassCollection.contains(exhibitionClass)){
+            exhibitionClassCollection.remove(exhibitionClass);
+            exhibitionClass.unlink(this);
+        }
+        updateCycle=false;        
     }
 
-    public void setExhibitionclassCollection(Collection<Exhibitionclass> exhibitionclassCollection) {
-        this.exhibitionclassCollection = exhibitionclassCollection;
+    @XmlTransient
+    public Collection<ExhibitionClass> getExhibitionClassCollection() {
+        return exhibitionClassCollection;
+    }
+
+    private void setExhibitionClassCollection(Collection<ExhibitionClass> exhibitionClassCollection) {
+        this.exhibitionClassCollection = exhibitionClassCollection;
     }
 
     @Override
